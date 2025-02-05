@@ -27,14 +27,25 @@ Use HTTP/2
 ### Miscellaneous
 I documented some of my discoveries and notes in the attached document notes.org
 
+I wouldn't normally leave so much debug logging, but for this product it made sense
+for a couple of reasons.  First, since this is not a production machine, a request 
+taking a few ms more due to logging isn't mission critical.  Second, the logging
+is light, mostly used in rules to determine points.  The logging helps break up the rules
+and makes it easier to track where points are erroneous.
+
 The receipt server will accept one flag (--debug) which enables logging.  The flag will accept an optional $LEVEL: "debug", "info", "warn", "error".  It uses log/slog and follows the time-tested pattern with those options.  Any other flag will generate this helpful output:
+
+``` sh
+
 $ bin/server --?
 flag provided but not defined: -?
 Usage of bin/server:
   -debug string
         Specify debugging level. 'debug','info','warn','error' (default "info")
+```
 
 To generate the environment, these steps were taken:
+``` sh
 $ go mod init receipt
 $ go install -v github.com/ogen-go/ogen/cmd/ogen@latest
 $ cp ~/api.yml 
@@ -42,6 +53,23 @@ $ echo -e "package main\n\n//go:generate go run github.com/ogen-go/ogen/cmd/ogen
 $ go get .
 $ go generate ./...
 
+```
+
+In general, I would not put heavy-lifting work (such as the points calculation) within a service request.
+For this specific exercise, the rules are relatively quick; it is not impossible to imagine a situation
+where the rules become a full-fledged complex state machine requiring external inputs.  To have a user 
+wait on that is inappropriate.  Instead, the calculation should be done either during periods of low 
+activity (by an asynchronous schedule, perhaps) or just-in-time should a get-points request come early.
+
 ## Installing and Running
-$ git clone http://
+
+``` sh
+
+$ git clone https://github.com/skzitz/receipt-challenge
+$ cd receipt-challenge
+$ go get .
+$ make all install
+
+```
+
 
