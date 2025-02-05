@@ -4,6 +4,7 @@ import (
     "log"
     "log/slog"
     "net/http"
+    "fmt"
     "flag"
     "strings"
 
@@ -13,18 +14,18 @@ import (
 func main() {
     // Create service instance.
     service := &receiptsService{
-        //    receipts: map[string]receipt.receipt{},
         receipts: map[string]receiptWithPoints{},
     }
-    // pass -debug={debug,info,warn,error}
+
+    // flag -debug={debug,info,warn,error}
     debugLevel := flag.String("debug","info","Specify debugging level. 'debug','info','warn','error'")
+    // flag -port=PORT
+    port := flag.Int("port",8080,"Listen to specified port")
 
     flag.Parse()
 
     // do we want to log?
     if debugLevel != nil {
-        //logger := slog.New(slog.NewTextHandler(os.Stdout,nil))
-        //slog.SetDefault()
         log.SetFlags( log.Ltime|log.Lshortfile )
         switch strings.ToLower(*debugLevel) {
         case "debug":
@@ -39,6 +40,7 @@ func main() {
             panic( "Can't parse debug level: " + (*debugLevel) )
         }
     }
+
     // Create generated server.
     srv, err := receipt.NewServer(service)
     if err != nil {
@@ -47,4 +49,5 @@ func main() {
     if err := http.ListenAndServe(":8080", srv); err != nil {
         log.Fatal(err)
     }
+    fmt.Println( "Starting on :", *port )
 }

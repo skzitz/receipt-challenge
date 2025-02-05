@@ -33,7 +33,7 @@ taking a few ms more due to logging isn't mission critical.  Second, the logging
 is light, mostly used in rules to determine points.  The logging helps break up the rules
 and makes it easier to track where points are erroneous.
 
-The receipt server will accept one flag (--debug) which enables logging.  The flag will accept an optional $LEVEL: "debug", "info", "warn", "error".  It uses log/slog and follows the time-tested pattern with those options.  Any other flag will generate this helpful output:
+The receipt server will accept flags. ```-debug``` which enables logging.  The flag will accept an optional $LEVEL: "debug", "info", "warn", "error".  It uses log/slog and follows the time-tested pattern with those options.  ```-port``` starts the server listening on a specific port.  It is an error if the specified port cannot be parsed.
 
 ``` sh
 
@@ -42,6 +42,8 @@ flag provided but not defined: -?
 Usage of bin/server:
   -debug string
         Specify debugging level. 'debug','info','warn','error' (default "info")
+  -port int
+        Listen to specified port (default 8080)
 ```
 
 To generate the environment, these steps were taken:
