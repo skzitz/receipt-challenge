@@ -5,7 +5,7 @@ package api
 import (
 	"math/bits"
 	"strconv"
-	//"fmt"
+
 	//skz: 'time' added for time.Parse() to fixup purchasetime below
 	"time"
 
@@ -247,9 +247,10 @@ func (s *Receipt) Decode(d *jx.Decoder) error {
 				//      so, maybe fix that up, now.
 				//      we'll circumvent json.DecodeTime()
 				str, err := d.Str()
-				//fmt.Println("d.Str=",str)
-				//fmt.Println("myerr=",myerr)
-				//				v, err := json.DecodeTime(d)
+				if err != nil {
+					v, err = time.Parse( "15:04", str )
+				}
+
 				v, err := time.Parse( "15:04:05", str )
 				if err != nil {
 					v, err = time.Parse( "15:04", str )
