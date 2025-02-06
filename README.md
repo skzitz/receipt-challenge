@@ -1,6 +1,6 @@
 # Receipt Processor Solution
 To install and start the receipt processor server (receipt-server), instructions are provided at the
-bottom of this README.
+[bottom of this README](#installing).
 
 ## Language Selection
 I have over 30 years of experience with C and C++.  I have similar years worth of experience with 6502ASM, x86ASM, Java, HTML,
@@ -16,15 +16,17 @@ I used the following:
  * curl v8.11.1 
 
 ### Assumptions Made
-According RFC3339 section 5.6 a "time" consists of 'time-hour ":" time-minute ":" time-second', and this is
+These are some of the assumptions I made while working on this project
+
+ * According RFC3339 section 5.6 a "time" consists of 'time-hour ":" time-minute ":" time-second', and this is 
 how ogen and its json implementation handle parsing times.  The examples provided only provide time-hour and time-minute.  This 
 necessitated a change to receipt/oas_json_gen.go to "manually" try to parse with the full spec and then fall back to the format
 provided.
 
-I chose ogen to do the heavy-lifting dealing with the API.  This was based on some cursory digs into finding an API generator for 
+ * I chose ogen to do the heavy-lifting dealing with the API.  This was based on some cursory digs into finding an API generator for 
 Go, and this seemed to be fairly well supported in the communites.
 
-Use HTTP/2 
+ * Use HTTP/2 
 
 ### Miscellaneous
 I documented some of my discoveries and notes in the attached document notes.org
@@ -66,7 +68,7 @@ where the rules become a full-fledged complex state machine also requiring exter
 wait on that is inappropriate.  Instead, the calculation should be done either during periods of low 
 activity (by an asynchronous schedule, perhaps) or just-in-time should a get-points request come early.
 
-## Installing and Running
+## Installing and Running {#installing}
 
 ### Installing
 
