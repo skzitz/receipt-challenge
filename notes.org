@@ -1,0 +1,47 @@
+#+title: Notes
+
+https://github.com/ogen-go/ogen  -- generates client & server stubs based on opanapi spec
+
++ see https://ogen.dev/docs/intro
+
++ Setup environment
+  $ go mod init receipt
+  $ go install -v github.com/ogen-go/ogen/cmd/ogen@latest
+  $ echo -e "package main\n\n//go:generate go run github.com/ogen-go/ogen/cmd/ogen@latest --target receipt --clean api.yml" > generate.go
+  $ go get .
+
++ Implement/add handlers
++ Implement/add service
+
++ build server
+  $ go build -o receipt-server
++ run server
+  $ go run .
+
+
+
+
++ some in-line questions during development
+  all were resolved.  I wish I had kept them here.
+
+
++ some calling notes for ogen
+
+  receiptsService.ReceiptsProcessPost (receiptservice.go:51)
+    receipt.server.handleReceiptsProcessPostRequest (oas_handlers_gen:289)
+      receipt.server.ServeHTTP (oas_router_gen.go:76)
+
++ simple-receipt.json:
+  curl -X "POST" -H "Content-Type: application/json" --data "{\"retailer\":\"retailer1\", \"purchaseDate\": \"2022-01-01\", \"purchaseTime\": \"15:04:05\", \"total\": \"6.49\", \"items\": [ { \"shortDescription\": \"Pepsi - 12-oz\", \"price\":\"1.25\"}]}" http://localhost:8080/receipts/process
+  GET-POINTS:
+
+
+
++ morning-receipt.json:
+    curl -X "POST" -H "Content-Type: application/json" --data "{ \"retailer\": \"Walgreens\", \"purchaseDate\": \"2022-01-02\", \"purchaseTime\": \"15:04:05\", \"total\": \"2.65\", \"items\": [ {\"shortDescription\": \"Pepsi - 12-oz\", \"price\": \"1.25\"}, {\"shortDescription\": \"Dasani\", \"price\": \"1.40\"} ] }" http://localhost:8080/receipts/process
+
+
++ to GET-POINTS:
+  curl -X "GET" -H "Content-Type: application/json" http://localhost:8080/receipts/$ID/points
+
+curl -X "GET" -H "Content-Type: application/json" http://localhost:8080/receipts/60a9570f-2a97-4dba-94e4-085f7d018c98/points
