@@ -248,7 +248,7 @@ func (s *Receipt) Decode(d *jx.Decoder) error {
 				//      we'll circumvent json.DecodeTime()
 				str, err := d.Str()
 				if err != nil {
-					v, err = time.Parse( "15:04", str )
+					return err
 				}
 
 				v, err := time.Parse( "15:04:05", str )

@@ -149,9 +149,6 @@ func (p* receiptsService) ReceiptsIDPointsGet(ctx context.Context, params receip
     defer p.mux.Unlock()
 
     thisReceipt, ok := p.receipts[params.ID]
-    slog.Debug( "params.ID=",params.ID )
-    slog.Debug( "ok=", ok )
-    slog.Debug( "thisReceipt=", thisReceipt )
     if ( !ok ) {
         return &receipt.NotFound{}, nil
     }

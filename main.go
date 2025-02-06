@@ -7,6 +7,7 @@ import (
     "fmt"
     "flag"
     "strings"
+    "math"
 
     receipt "receipt/receipt"
 )
@@ -18,13 +19,13 @@ func main() {
     }
 
     // flag -debug={debug,info,warn,error}
-    debugLevel := flag.String("debug","info","Specify debugging level. 'debug','info','warn','error'")
+    debugLevel := flag.String("debug","none","Specify debugging level. 'debug','info','warn','error','none'")
     // flag -port=PORT
     port := flag.Int("port",8080,"Listen to specified port")
 
     flag.Parse()
 
-    // do we want to log?
+    // what level for logging
     if debugLevel != nil {
         log.SetFlags( log.Ltime|log.Lshortfile )
         switch strings.ToLower(*debugLevel) {
@@ -36,6 +37,9 @@ func main() {
             slog.SetLogLoggerLevel(slog.LevelWarn)
         case "error":
             slog.SetLogLoggerLevel(slog.LevelError)
+        case "none":
+            // specify a level not used to hackishly disable logging.
+            slog.SetLogLoggerLevel(math.MaxInt)
         default:
             panic( "Can't parse debug level: " + (*debugLevel) )
         }
@@ -46,8 +50,8 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    if err := http.ListenAndServe(":8080", srv); err != nil {
+    fmt.Println( "Receipt Server starting on :", *port )
+    if err := http.ListenAndServe(fmt.Sprintf(":%d",*port), srv); err != nil {
         log.Fatal(err)
     }
-    fmt.Println( "Starting on :", *port )
 }

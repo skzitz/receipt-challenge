@@ -1,4 +1,6 @@
-# Receipt Processor solution
+# Receipt Processor Solution
+To install and start the receipt processor server (receipt-server), instructions are provided at the
+bottom of this README.
 
 ## Language Selection
 I have over 30 years of experience with C and C++.  I have similar years worth of experience with 6502ASM, x86ASM, Java, HTML,
@@ -11,7 +13,7 @@ Coming from a C and C++ heavy background, I used a Makefile rather than e.g., cm
 I used the following:
  * go version go1.23.5 linux/amd64
  * ogen v1.9.0
- 
+ * curl v8.11.1 
 
 ### Assumptions Made
 According RFC3339 section 5.6 a "time" consists of 'time-hour ":" time-minute ":" time-second', and this is
@@ -33,7 +35,8 @@ taking a few ms more due to logging isn't mission critical.  Second, the logging
 is light, mostly used in rules to determine points.  The logging helps break up the rules
 and makes it easier to track where points are erroneous.
 
-The receipt server will accept flags. ```-debug``` which enables logging.  The flag will accept an optional $LEVEL: "debug", "info", "warn", "error".  It uses log/slog and follows the time-tested pattern with those options.  ```-port``` starts the server listening on a specific port.  It is an error if the specified port cannot be parsed.
+The receipt server will accept flags. ```-debug``` which enables logging.  The flag requires a $LEVEL: "debug", "info", "warn", "error", or "none".  
+It uses log/slog and follows the time-tested pattern with those options.  ```-port``` starts the server listening on a specific port.  
 
 ``` sh
 
@@ -41,7 +44,7 @@ $ bin/server --?
 flag provided but not defined: -?
 Usage of bin/server:
   -debug string
-        Specify debugging level. 'debug','info','warn','error' (default "info")
+        Specify debugging level. 'debug','info','warn','error','none' (default "none")
   -port int
         Listen to specified port (default 8080)
 ```
@@ -58,12 +61,14 @@ $ go generate ./...
 ```
 
 In general, I would not put heavy-lifting work (such as the points calculation) within a service request.
-For this specific exercise, the rules are relatively quick; it is not impossible to imagine a situation
-where the rules become a full-fledged complex state machine requiring external inputs.  To have a user 
+For this specific exercise, the rules are relatively quick; however, it is not impossible to imagine a situation
+where the rules become a full-fledged complex state machine also requiring external inputs.  To have a user 
 wait on that is inappropriate.  Instead, the calculation should be done either during periods of low 
 activity (by an asynchronous schedule, perhaps) or just-in-time should a get-points request come early.
 
 ## Installing and Running
+
+### Installing
 
 ``` sh
 
@@ -72,6 +77,49 @@ $ cd receipt-challenge
 $ go get .
 $ make all install
 
+```
+
+### Running
+
+The server accepts two parameters, both of which have a sensible default option.  Passing any illegal option will generate
+help text.
+
+If port 8080 is not available, you may specify -port=$PORT.  Logging is generated using levels similar to syslog: -d=$LEVEL
+will enable debug logging ($LEVEL must be one of 'debug', 'info', 'warn', 'error', or 'none' (the dfefault)).
+
+``` sh
+$ bin/server 
+```
+
+### Testing from the command line
+
+The CLI test scripts provided require curl.
+
+Start the server:
+
+``` sh
+$ bin/server --debug=debug
+Receipt Server starting on : 8080
+```
+
+In another term, run one of the test scripts:
+
+``` sh
+$ tests/test1.sh
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 06 Feb 2025 16:22:22 GMT
+Content-Length: 45
+
+{"id":"51815e37-7aba-44c2-ad38-562f7ed6d56f"}
+
+```
+
+Verify the points generated match expectation:
+
+``` sh
+$ tests/get_points 51815e37-7aba-44c2-ad38-562f7ed6d56f
+{"points":28}
 ```
 
 
