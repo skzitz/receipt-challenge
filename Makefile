@@ -4,7 +4,7 @@
 # @file
 # @version 0.1
 
-GO			=	go
+GOCMD		=	go
 #GOFLAGS	=	-v -work -x
 BINDIR		=	${PWD}/bin
 
@@ -23,20 +23,20 @@ install: ${BINDIR}/receipt-server # ${BINDIR}/receipt-client
 # Go-specific targets
 .PHONY: go-test
 go-test:
-	${GO} test
+	${GOCMD} test
 
 .PHONY: go-vert
 go-vet:
-	${GO} vet
+	${GOCMD} vet
 
 
 # Let go manage the dependency for receipt-server
 .PHONY: receipt-server
 receipt-server:
-	${GO} build ${GOFLAGS} -o $@
+	${GOCMD} build ${GOFLAGS} -o $@
 
 #receipt-client:
-#	${GO} build -C client ${GOFLAGS} -o $@
+#	${GOCMD} build -C client ${GOFLAGS} -o $@
 
 erf:
 	@echo ${BINDIR}
